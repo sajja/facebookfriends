@@ -48,29 +48,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         final String childText = (String) getChild(groupPosition, childPosition);
 
-        LinearLayout yyy = null;
+        RelativeLayout row = null;
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_item, null);
             Object o = infalInflater.inflate(R.layout.list_item, parent, false);
-            yyy = (LinearLayout) o;
         }
 
-        if (yyy != null) {
-            CheckBox cb = new CheckBox(_context);
-            cb.setText("2");
-            cb.setId(112);
-            cb.setPadding(100,100,100,100);
-            yyy.addView(cb);
-
-            TextView text = new TextView(_context);
-            text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            text.setText("xxxxx");
-            text.setTextSize(20);
-
-            yyy.addView(text);
-        }
+        TextView a = (TextView) convertView.findViewById(R.id.lblListItem1);
+        a.setText("A");
+        TextView b = (TextView) convertView.findViewById(R.id.lblListItem2);
+        b.setText("B");
 
         return convertView;
     }

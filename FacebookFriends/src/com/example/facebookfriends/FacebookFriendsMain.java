@@ -15,18 +15,6 @@ public class FacebookFriendsMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_facebook_friends_main);
-
-
-        LinearLayout parent = (LinearLayout) findViewById(R.id.layout);
-        LayoutInflater li = getLayoutInflater();
-        View view;
-        for (int i = 0; i<10; i++) {
-            view = li.inflate(R.layout.text_layout, parent, false);
-            TextView tw = (TextView) view.findViewById(R.id.text);
-            tw.setText("Hello " + i);
-            parent.addView(tw);
-        }
-        System.out.println("xx");
     }
 
 	@Override
