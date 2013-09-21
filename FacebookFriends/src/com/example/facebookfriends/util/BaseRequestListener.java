@@ -10,9 +10,8 @@ import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.FacebookError;
 
 /**
- * Skeleton base class for RequestListeners, providing default error 
+ * Skeleton base class for RequestListeners, providing default error
  * handling. Applications should handle these error conditions.
- *
  */
 public abstract class BaseRequestListener implements RequestListener {
 
@@ -37,5 +36,5 @@ public abstract class BaseRequestListener implements RequestListener {
         Log.e("Facebook", e.getMessage());
         e.printStackTrace();
     }
-    
+
 }

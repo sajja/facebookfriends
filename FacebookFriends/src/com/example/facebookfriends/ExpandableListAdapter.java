@@ -3,37 +3,37 @@ package com.example.facebookfriends;
 import java.util.HashMap;
 import java.util.List;
 
-import android.app.ActionBar;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private Context _context;
-    private List<String> _listDataHeader; // header titles
+    private List<String> groups;
+    private Context context;
+    private List<String> listDataHeader; // header titles
     // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
+    private HashMap<String, List<String>> listDataChild;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
-        this._context = context;
-        this._listDataHeader = listDataHeader;
-        this._listDataChild = listChildData;
+                                 HashMap<String, List<String>> listChildData, List<String> groups) {
+        this.context = context;
+        this.listDataHeader = listDataHeader;
+        this.listDataChild = listChildData;
+        this.groups = groups;
     }
+
+
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
+        return this.listDataChild.get(this.listDataHeader.get(groupPosition))
                 .get(childPosititon);
     }
 
@@ -46,38 +46,45 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+        LayoutInflater layoutInflater =(LayoutInflater) this.context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        RelativeLayout row = null;
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this._context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_item, null);
-            Object o = infalInflater.inflate(R.layout.list_item, parent, false);
+        convertView = layoutInflater.inflate(R.layout.list_item, null);
+
+        LinearLayout parentLayout = (LinearLayout) convertView.findViewById(R.id.layout);
+        View view;
+
+        for (String group : groups) {
+            view = layoutInflater.inflate(R.layout.list_item_layout, parentLayout, false);
+            // In order to get the view we have to use the new view with text_layout in it
+            TextView textView = (TextView)view.findViewById(R.id.text);
+            textView.setText(group);
+            textView.setBackgroundColor(Color.RED);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    view.setBackgroundColor(Color.BLUE);
+                }
+            });
+            parentLayout.addView(textView);
         }
-
-        TextView a = (TextView) convertView.findViewById(R.id.lblListItem1);
-        a.setText("A");
-        TextView b = (TextView) convertView.findViewById(R.id.lblListItem2);
-        b.setText("B");
-
         return convertView;
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
+        return this.listDataChild.get(this.listDataHeader.get(groupPosition))
                 .size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return this._listDataHeader.get(groupPosition);
+        return this.listDataHeader.get(groupPosition);
     }
 
     @Override
     public int getGroupCount() {
-        return this._listDataHeader.size();
+        return this.listDataHeader.size();
     }
 
     @Override
@@ -90,7 +97,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                              View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
         if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this._context
+            LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_group, null);
         }
