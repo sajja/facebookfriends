@@ -1,8 +1,14 @@
 package com.example.facebookfriends.util;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import com.example.facebookfriends.model.Friend;
+import com.example.facebookfriends.model.FriendGroup;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,20 +76,46 @@ public class FacebookConnector {
         }
     }
 
+    public Map<String, Friend> getMyFriends(List<FriendGroup> friendGroups) throws JSONException, IOException {
+        HashMap<String, Friend> friendMap = new HashMap<String, Friend>();
+        Bundle parameters = new Bundle();
 
-    public String[] getMyFriends() throws JSONException {
-        ArrayList<String> friends = new ArrayList<String>();
+
+        if (facebook.isSessionValid()) {
+            for (FriendGroup friendGroup : friendGroups) {
+                String response = facebook.request(friendGroup.getId()+"/members", parameters, "GET");
+                JSONObject jsonResponse = new JSONObject(response);
+                JSONArray jsonObjectArray = jsonResponse.getJSONArray("data");
+
+                for (int i = 0; i < jsonObjectArray.length(); i++) {
+                    JSONObject object = jsonObjectArray.getJSONObject(i);
+                    Friend friend = new Friend(object.getString("name"), object.getString("id"));
+                    if (friendMap.containsKey(friend.getId())) {
+                        friend = friendMap.get(friend.getId());
+                        friend.addFriendGroup(friendGroup);
+                    } else {
+                        friend.addFriendGroup(friendGroup);
+                        friendMap.put(friend.getId(),friend);
+                    }
+                }
+            }
+        }
+        return friendMap;
+    }
+
+    public List<FriendGroup> getAllFriendLists() throws JSONException {
+        ArrayList<FriendGroup> friendList = new ArrayList<FriendGroup>();
         if (facebook.isSessionValid()) {
             Bundle parameters = new Bundle();
             try {
-                String response = facebook.request("me/friends", parameters, "GET");
+                String response = facebook.request("me/friendlists", parameters, "GET");
                 JSONObject jsonResponse = new JSONObject(response);
                 System.out.println(response);
                 JSONArray jsonObjectArray = jsonResponse.getJSONArray("data");
 
                 for (int i = 0; i < jsonObjectArray.length(); i++) {
                     JSONObject object = jsonObjectArray.getJSONObject(i);
-                    friends.add(object.getString("name"));
+                    friendList.add(new FriendGroup(object.getString("name"), object.getString("id")));
 
                 }
 
@@ -93,7 +125,7 @@ public class FacebookConnector {
         } else {
             login();
         }
-        return friends.toArray(new String[]{});
+        return friendList;
     }
 
     private final class LoginDialogListener implements DialogListener {
