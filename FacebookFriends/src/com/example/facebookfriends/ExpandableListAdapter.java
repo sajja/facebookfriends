@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -46,7 +48,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        LayoutInflater layoutInflater =(LayoutInflater) this.context
+    	LayoutInflater layoutInflater =(LayoutInflater) this.context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         convertView = layoutInflater.inflate(R.layout.list_item, null);
@@ -55,20 +57,28 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         View view;
 
         for (String group : groups) {
-            view = layoutInflater.inflate(R.layout.list_item_layout, parentLayout, false);
-            // In order to get the view we have to use the new view with text_layout in it
-            TextView textView = (TextView)view.findViewById(R.id.text);
-            textView.setText(group);
-            textView.setBackgroundColor(Color.RED);
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    view.setBackgroundColor(Color.BLUE);
-                }
+            view = layoutInflater.inflate(R.layout.list_item_layout, null);
+            // In order to get the view we have to use the new view with Toggle Button in it
+            ToggleButton toggle = (ToggleButton)view.findViewById(R.id.toggle);
+            toggle.setText(group);
+            toggle.setTextOff(group);
+            toggle.setTextOn(group);
+            toggle.setHeight(50);
+            toggle.setChecked(true);
+            toggle.setBackgroundColor(Color.YELLOW);
+            toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+    		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    		        if (isChecked) {
+    		        	buttonView.setBackgroundColor(Color.YELLOW);
+    		        } else {
+    		        	buttonView.setBackgroundColor(Color.CYAN);
+    		        }
+    		    }
             });
-            parentLayout.addView(textView);
+            parentLayout.addView(toggle);
         }
         return convertView;
+
     }
 
     @Override
